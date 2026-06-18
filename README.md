@@ -1,39 +1,9 @@
+# Azure Virtual Network Lab — Hub-and-Spoke Topology
 > **Disclaimer:** All Azure resources created in this lab were deleted after completion. No services were left running. This lab was built purely for learning and documentation purposes.
 
 ---
-<img src="https://imgur.com/Eco5Dh6.png" height="80%" width="80%" alt=""/>
-
-<img src="https://imgur.com/jadNhKb.png" height="80%" width="80%" alt=""/>
-
-<img src="https://imgur.com/v0l5Pa1.png" height="80%" width="80%" alt=""/>
-
-<img src="https://imgur.com/AyrhCLE.png" height="80%" width="80%" alt=""/>
-
-<img src="https://imgur.com/DVDtrmf.png" height="80%" width="80%" alt=""/>
-
-<img src="https://imgur.com/ETiaz0m.png" height="80%" width="80%" alt=""/>
-
-<img src="https://imgur.com/jKOlO5d.png" height="80%" width="80%" alt=""/>
-
-<img src="https://imgur.com/My8EnP8.png" height="80%" width="80%" alt=""/>
-
-<img src="https://imgur.com/jKOlO5d.png" height="80%" width="80%" alt=""/>
-
-<img src="https://imgur.com/My8EnP8.png" height="80%" width="80%" alt=""/>
-
-<img src="https://imgur.com/DekbJKw.png" height="80%" width="80%" alt=""/>
-
-<img src="https://imgur.com/nF1SAoq.png" height="80%" width="80%" alt=""/>
-
-<img src="https://imgur.com/Ls1Hcop.png" height="80%" width="80%" alt=""/>
-
-
-
-
-# Azure Virtual Network Lab — Hub-and-Spoke Topology
 
 ## Description
-
 This lab focuses on how I built a hub-and-spoke network topology in Azure — covering VNet creation, peering across regions, Network Security Groups, and secure VM access via Azure Bastion.
 
 | Detail | Value |
@@ -54,7 +24,6 @@ This lab focuses on how I built a hub-and-spoke network topology in Azure — co
 - Deployed VMs into subnets and applied NSGs with inbound/outbound rules
 - Set up Azure Bastion for secure RDP/SSH access without public IPs
 - Verified peering connectivity between `Neti-Hub` and `Neti-Spoke`
-- Documented the topology with a network diagram
 
 ---
 
@@ -80,25 +49,26 @@ azure-vnet-lab/
 I created a resource group named `Az-Ropu1-lab` in **Australia East** to house all resources for this lab.
 
 **Steps:**
-
 1. Navigate to **Resource groups** → **+ Create**
 2. Name: `Az-Ropu1-lab` | Region: `Australia East`
 3. Click **Review + create** → **Create**
-
-<!-- screenshot -->
+<br /> 
+<img src="https://imgur.com/Eco5Dh6.png" height="80%" width="80%" alt=""/>
 
 ---
 
 ## Part 2 — VNets and Subnets
 
-<!-- describe what you did and why here -->
+I created two Vnets which I named `Neti-Hub` in **Australia East** and `Neti-Spoke` in **Australia Southeast**, 
+within the Virtual Networks I created 3 subnets `SubnetHub`, and `AzureBastionSubnet` which were setup in **Neti-Hub**, and 
+`SubnetSpoke` which is setup in **Neti-Spoke**
 
 | VNet | Region | Address Space | Subnets |
 | --- | --- | --- | --- |
 | `Neti-Hub` | Australia East | `10.1.0.0/16` | `SubnetHub` — `10.1.1.0/24` / `AzureBastionSubnet` — `10.1.2.0/26` |
 | `Neti-Spoke` | Australia Southeast | `10.2.0.0/16` | `SubnetSpoke` — `10.2.1.0/24` |
 
-> `AzureBastionSubnet` must be named exactly — Azure enforces this. The subnet range must be a minimum of `/26`.
+> `AzureBastionSubnet` must be named exactly — Azure enforces this. The subnet range must be a minimum of `/26` aswell.
 
 **Steps:**
 
@@ -110,14 +80,14 @@ I created a resource group named `Az-Ropu1-lab` in **Australia East** to house a
 3. Create `Neti-Spoke` in `Australia Southeast`
    - Address space: `10.2.0.0/16`
    - Add `SubnetSpoke` — `10.2.1.0/24`
-
-<!-- screenshot -->
+<br /> 
+<img src="https://imgur.com/jadNhKb.png" height="80%" width="80%" alt=""/>
 
 ---
 
 ## Part 3 — VNet Peering
 
-<!-- describe what you did and why here -->
+Once both VNets were configured, I set up VNet peering, which allowed the two VNets to connect and communicate with each other.
 
 | Peering Name | Direction |
 | --- | --- |
@@ -134,14 +104,16 @@ I created a resource group named `Az-Ropu1-lab` in **Australia East** to house a
 4. Remote link name: `Neti-Spoke-to-Hub`
 5. Click **Add**
 6. Verify both show as **Connected** in each VNet's Peerings blade
-
-<!-- screenshot -->
+<br /> 
+<img src="https://imgur.com/v0l5Pa1.png" height="80%" width="80%" alt=""/>
+<br /> 
+<img src="https://imgur.com/AyrhCLE.png" height="80%" width="80%" alt=""/>
 
 ---
 
 ## Part 4 — Virtual Machines
 
-<!-- describe what you did and why here -->
+I created two VMs `Vmihini1` that would sit in **Neti-Hub** and `Vmihini2` which I put into **Neti-Spoke**
 
 | VM | VNet | Subnet | OS | Public IP |
 | --- | --- | --- | --- | --- |
@@ -159,52 +131,53 @@ I created a resource group named `Az-Ropu1-lab` in **Australia East** to house a
 3. Deploy `Vmihini2` into `Az-Ropu1-lab`, region `Australia Southeast`
    - VNet: `Neti-Spoke` / Subnet: `SubnetSpoke`
    - Public IP: None | NIC NSG: None
-
-<!-- screenshot -->
+<br /> 
+<img src="https://imgur.com/DVDtrmf.png" height="80%" width="80%" alt=""/>
+<br /> 
+<img src="https://imgur.com/ETiaz0m.png" height="80%" width="80%" alt=""/>
 
 ---
 
 ## Part 5 — Network Security Groups (NSGs)
 
-<!-- describe what you did and why here -->
+Once the VMs were deployed, I configured Network Security Groups (NSGs) and inbound security rules to control traffic entering resources in both VNets.
+
 
 | NSG | Attached To |
 | --- | --- |
 | `Pirihi-mana-Hub` | `SubnetHub` — `Neti-Hub` |
 | `Pirihi-mana-Spoke` | `SubnetSpoke` — `Neti-Spoke` |
 
+
+> The ICMP rules were configured to allow traffic from the opposite VNet range, enabling ping tests across the peered VNets.
+However, I mistakenly assigned ports (443 and 21) to the ICMP rules. Since ICMP does not use ports, the ping test failed until the rules were corrected hinting towards why I skipped the final section.
+
+
 **Inbound Rules — Pirihi-mana-Hub:**
 
 | Priority | Name | Port | Protocol | Source | Action |
 | --- | --- | --- | --- | --- | --- |
 | 100 | Allow-RDP | 3389 | TCP | Any | Allow |
-| 110 | Allow-ICMP | * | ICMP | `10.2.0.0/16` | Allow |
-| 4096 | Deny-All-Inbound | * | Any | Any | Deny |
+| 110 | Allow-ICMP | 21 | ICMP | `10.2.0.0/16` | Allow |
+| 4096 | Deny-All-Inbound | 25 | Any | Any | Deny |
 
 **Inbound Rules — Pirihi-mana-Spoke:**
 
 | Priority | Name | Port | Protocol | Source | Action |
 | --- | --- | --- | --- | --- | --- |
 | 100 | Allow-RDP | 3389 | TCP | Any | Allow |
-| 110 | Allow-ICMP | * | ICMP | `10.1.0.0/16` | Allow |
-| 4096 | Deny-All-Inbound | * | Any | Any | Deny |
-
-> The ICMP rule source is swapped between NSGs — Hub allows ICMP from the Spoke range and vice versa. This is what permits the ping test across peered VNets.
-
-**Steps:**
-
-1. Navigate to **Network security groups** → **+ Create**
-2. Create `Pirihi-mana-Hub` in `Australia East`, associate to `SubnetHub`
-3. Create `Pirihi-mana-Spoke` in `Australia Southeast`, associate to `SubnetSpoke`
-4. Add inbound rules to each as per the tables above
-
-<!-- screenshot -->
+| 110 | Allow-ICMP | 443 | ICMP | `10.1.0.0/16` | Allow |
+| 4096 | Deny-All-Inbound | 443 | Any | Any | Deny |
+<br /> 
+<img src="https://imgur.com/jKOlO5d.png" height="80%" width="80%" alt=""/>
+<br /> 
+<img src="https://imgur.com/My8EnP8.png" height="80%" width="80%" alt=""/>
 
 ---
 
 ## Part 6 — Azure Bastion
 
-<!-- describe what you did and why here -->
+I created an Azure Bastion to securely connect to the VMs and verify connectivity between the peered VNets.
 
 | Detail | Value |
 | --- | --- |
@@ -225,47 +198,31 @@ I created a resource group named `Az-Ropu1-lab` in **Australia East** to house a
 5. Tier: **Basic**
 6. Click **Review + create** → **Create**
 
-> **Note:** VM access via Bastion was not completed. The VMs were flagged during deployment due to security compliance restrictions on the subscription. Connectivity testing across the peered VNets (Part 7) was skipped as a result.
+> **Note:** VM access via Bastion was successful. Although both VMs connected correctly, the ping test failed due to the NSG misconfiguration described in Part 5.
 
-<!-- screenshot -->
+<img src="https://imgur.com/DekbJKw.png" height="80%" width="80%" alt=""/>
+
+<img src="https://imgur.com/nF1SAoq.png" height="80%" width="80%" alt=""/>
+
+<img src="https://imgur.com/Ls1Hcop.png" height="80%" width="80%" alt=""/>
 
 ---
 
 ## Part 7 — Connectivity Test
 
-> Skipped. VM access was restricted due to security compliance policies on the subscription. Bastion was successfully deployed and configured. The peering between `Neti-Hub` and `Neti-Spoke` was verified as **Connected** on both sides.
-
----
-
-## Cleanup
-
-Resources were deleted in the following order to avoid dependency conflicts:
-
-1. **Bastion** — `Bastion-point`
-2. **Virtual Machines** — `Vmihini1` and `Vmihini2` (OS disks and NICs deleted with VMs)
-3. **NSGs** — `Pirihi-mana-Hub` and `Pirihi-mana-Spoke`
-4. **VNet Peerings** — deleted from `Neti-Hub` (return peering auto-removed)
-5. **VNets** — `Neti-Hub` and `Neti-Spoke`
-6. **Public IP** — `Bastion-point-pip`
-7. **Resource Group** — `Az-Ropu1-lab` (catches any remaining orphaned resources)
-
----
-
-## Network Diagram
-
-<!-- insert diagram here -->
+> VM access via Bastion was successful, and the peering between `Neti-Hub` and `Neti-Spoke` was verified as **Connected** on both sides. However, connectivity testing initially failed due to an NSG misconfiguration, where ICMP rules were incorrectly assigned port numbers. This issue highlighted the importance of carefully validating security rules and serves as a valuable lesson for future Azure networking projects.
 
 ---
 
 ## Key Takeaways
 
-<!-- write this in your own words after completing the lab -->
+
 
 ---
 
 ## Lessons Learned
 
-<!-- write this in your own words after completing the lab -->
+
 
 ---
 
