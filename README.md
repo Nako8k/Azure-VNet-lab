@@ -52,7 +52,7 @@ I created a resource group named `Az-Ropu1-lab` in **Australia East** to house a
 1. Navigate to **Resource groups** → **+ Create**
 2. Name: `Az-Ropu1-lab` | Region: `Australia East`
 3. Click **Review + create** → **Create**
-<br /> 
+
 <img src="https://imgur.com/Eco5Dh6.png" height="80%" width="80%" alt=""/>
 
 ---
@@ -80,7 +80,7 @@ within the Virtual Networks I created 3 subnets `SubnetHub`, and `AzureBastionSu
 3. Create `Neti-Spoke` in `Australia Southeast`
    - Address space: `10.2.0.0/16`
    - Add `SubnetSpoke` — `10.2.1.0/24`
-<br /> 
+
 <img src="https://imgur.com/jadNhKb.png" height="80%" width="80%" alt=""/>
 
 ---
@@ -104,7 +104,7 @@ Once both VNets were configured, I set up VNet peering, which allowed the two VN
 4. Remote link name: `Neti-Spoke-to-Hub`
 5. Click **Add**
 6. Verify both show as **Connected** in each VNet's Peerings blade
-<br /> 
+
 <img src="https://imgur.com/v0l5Pa1.png" height="80%" width="80%" alt=""/>
 <br /> 
 <img src="https://imgur.com/AyrhCLE.png" height="80%" width="80%" alt=""/>
@@ -131,7 +131,7 @@ I created two VMs `Vmihini1` that would sit in **Neti-Hub** and `Vmihini2` which
 3. Deploy `Vmihini2` into `Az-Ropu1-lab`, region `Australia Southeast`
    - VNet: `Neti-Spoke` / Subnet: `SubnetSpoke`
    - Public IP: None | NIC NSG: None
-<br /> 
+
 <img src="https://imgur.com/DVDtrmf.png" height="80%" width="80%" alt=""/>
 <br /> 
 <img src="https://imgur.com/ETiaz0m.png" height="80%" width="80%" alt=""/>
@@ -168,7 +168,7 @@ However, I mistakenly assigned ports (443 and 21) to the ICMP rules. Since ICMP 
 | 100 | Allow-RDP | 3389 | TCP | Any | Allow |
 | 110 | Allow-ICMP | 443 | ICMP | `10.1.0.0/16` | Allow |
 | 4096 | Deny-All-Inbound | 443 | Any | Any | Deny |
-<br /> 
+
 <img src="https://imgur.com/jKOlO5d.png" height="80%" width="80%" alt=""/>
 <br /> 
 <img src="https://imgur.com/My8EnP8.png" height="80%" width="80%" alt=""/>
@@ -216,13 +216,22 @@ I created an Azure Bastion to securely connect to the VMs and verify connectivit
 
 ## Key Takeaways
 
-
+- Demonstrated the fundamentals — of VNets and VNet peering inside Microsoft Azure 
+- Successfully created —  VNets, subnets and connectivity between them
+- Organised VMs into proper groups  
+- Recheck configurations for In-bound rules — via Network Security Groups (NSGs)
 
 ---
 
 ## Lessons Learned
 
+ - Always double check - The biggest lesson learned from this lab was the importance of carefully validating NSG configurations.
+   The ping test in Part 7 failed because the ICMP rules were misconfigured. Rather than removing the result, I chose to document the issue as part of the learning process.
+   This experience will help me avoid similar mistakes in future Azure networking projects.
 
+- Connections - This lab involved extensive configuration of connectivity and peering, which helped reinforce the importance of VNet peering,
+  correct IP addressing and CIDR planning, and attention to detail when reviewing provisioning and connection states.
+  Ensuring these elements are correctly configured is essential to confirm that resources are properly connected and communicating as intended.
 
 ---
 
